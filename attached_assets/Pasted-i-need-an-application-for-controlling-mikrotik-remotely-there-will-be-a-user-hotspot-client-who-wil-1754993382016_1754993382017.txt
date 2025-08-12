@@ -1,0 +1,1657 @@
+i need an application for controlling mikrotik remotely. there will be a user(hotspot client who will connect to the free wifi and be redirected to captive portal hosted on my vps) here, he will be presented with subscription plans,which will be set by sub provider, who is an admin. who also will have his front end. this is an example of his frontend source page   
+
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+   <link rel="shortcut icon" href="https://mkash.wispman.net/ui/theme/default/images/logo.png" type="image/x-icon" />
+    <title>Dashboard - WISPMAN</title>
+    <!-- Simple bar CSS -->
+    <link rel="stylesheet" href="https://mkash.wispman.net/ui/theme/default/styles/simplebar.css">
+    <!-- Fonts CSS -->
+    <link href="https://fonts.googleapis.com/css2?family=Overpass:ital,wght@0,100;0,200;0,300;0,400;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+    <!-- Icons CSS -->
+    <link rel="stylesheet" href="https://mkash.wispman.net/ui/theme/default/styles/feather.css">
+    <!-- Date Range Picker CSS -->
+    <link rel="stylesheet" href="https://mkash.wispman.net/ui/theme/default/styles/daterangepicker.css">
+<link rel="stylesheet" href="https://mkash.wispman.net/ui/theme/default/styles/dataTables.bootstrap5.min.css">
+ <link rel="stylesheet" href="https://mkash.wispman.net/ui/theme/default/styles/select2.css">
+     <!-- FullCalendar CSS -->
+    <link rel="stylesheet" href="https://mkash.wispman.net/ui/theme/default/styles/fullcalendar.css">
+    <link rel="stylesheet" href="https://mkash.wispman.net/ui/theme/default/styles/select2.css">
+    <link rel="stylesheet" href="https://mkash.wispman.net/ui/theme/default/styles/dropzone.css">
+    <link rel="stylesheet" href="https://mkash.wispman.net/ui/theme/default/styles/uppy.min.css">
+    <link rel="stylesheet" href="https://mkash.wispman.net/ui/theme/default/styles/jquery.steps.css">
+    <link rel="stylesheet" href="https://mkash.wispman.net/ui/theme/default/styles/jquery.timepicker.css">
+    <link rel="stylesheet" href="https://mkash.wispman.net/ui/theme/default/styles/quill.snow.css">
+    <!-- Date Range Picker CSS -->
+    <link rel="stylesheet" href="https://mkash.wispman.net/ui/theme/default/styles/daterangepicker.css">
+<!--<link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.min.css">-->
+	<link rel="stylesheet" href="https://cdn.datatables.net/select/1.3.4/css/select.dataTables.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  	<script type="text/javascript" src="vendors/highchart/js/highcharts.js"></script>
+	<script type="text/javascript" src="vendors/highchart/js/themes/sand-signika.src.js"></script>
+    <!-- App CSS -->
+    <link rel="stylesheet" href="https://mkash.wispman.net/ui/theme/default/styles/app-light.css" id="lightTheme">
+    <link rel="stylesheet" href="https://mkash.wispman.net/ui/theme/default/styles/app-dark.css" id="darkTheme" disabled>
+  </head>
+  <body class="vertical  light  ">
+    <div class="wrapper">
+      <nav class="topnav navbar navbar-light">
+        <button type="button" class="navbar-toggler text-muted mt-2 p-0 mr-3 collapseSidebar">
+          <i class="fe fe-menu navbar-toggler-icon"></i>
+        </button>
+        <ul class="nav">
+          <li class="nav-item">
+                 <h2><small class="d-block text-danger" id="date"></small></h2>
+                  <h2><small class="d-block text-danger" id="clock"></small></h2>
+          </li>
+
+  
+          <li class="nav-item">
+            <a class="nav-link text-muted my-2" href="#" id="modeSwitcher" data-mode="light">
+              <i class="fe fe-sun fe-16"></i>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link text-muted my-2" href="./#" data-toggle="modal" data-target=".modal-shortcut">
+              <span class="fe fe-grid fe-16"></span>
+            </a>
+          </li>
+          <li class="nav-item nav-notif">
+            <a class="nav-link text-muted my-2" href="./#" data-toggle="modal" data-target=".modal-notif">
+              <span class="fe fe-bell fe-16"></span>
+              <span class="dot dot-md bg-success"></span>
+            </a>
+          </li>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle text-muted pr-0" href="#" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              <span class="avatar avatar-sm mt-2">
+                <img src="https://mkash.wispman.net/ui/theme/default/images/avatars/face-1.jpg" alt="..." class="avatar-img rounded-circle">
+              </span>
+            </a>
+            <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdownMenuLink">
+              <a class="dropdown-item" href="https://mkash.wispman.net/index.php?_route=settings/users">Profile</a>
+              <a class="dropdown-item" href="https://mkash.wispman.net/index.php?_route=settings/app">Settings</a>
+              <a class="dropdown-item" href="https://mkash.wispman.net/index.php?_route=logs/login">Activities</a>
+              <a class="dropdown-item" href="https://mkash.wispman.net/index.php?_route=logout">Logout</a>
+            </div>
+          </li>
+        </ul>
+      </nav>
+      <aside class="sidebar-left border-right bg-white shadow" id="leftSidebar" data-simplebar>
+        <a href="#" class="btn collapseSidebar toggle-btn d-lg-none text-muted ml-2 mt-3" data-toggle="toggle">
+          <i class="fe fe-x"><span class="sr-only"></span></i>
+        </a>
+        <nav class="vertnav navbar navbar-light">
+          <!-- nav bar -->
+          <div class="w-100 mb-4 d-flex">         
+              <a href="https://mkash.wispman.net/index.php?_route=dashboard" class="navbar-brand mx-auto mt-2 flex-fill text-center">
+					<img src="https://mkash.wispman.net/ui/theme/default/images/logo.png" alt="..." height="30">
+				</a>          
+          </div>
+
+           <ul class="navbar-nav flex-fill w-100 mb-2">
+		       <li  class="nav-item w-100">
+              <a class="nav-link" href="https://mkash.wispman.net/index.php?_route=dashboard">
+                <i class="fe fe-home fe-16"></i>
+                <span class="ml-3 item-text">Dashboard</span>
+                <span class="badge badge-pill badge-primary">New</span>
+              </a>
+            </li>
+          </ul>
+
+          <!--<p class="text-muted nav-heading mt-4 mb-1">
+            <span>Components</span>
+          </p>-->
+         
+          <ul class="navbar-nav flex-fill w-100 mb-2">
+        
+            <li class="nav-item dropdown ">
+              <a href="#ui-elements" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle nav-link ">
+                <i class="fe fe-box fe-20"></i>
+                <span class="ml-3 item-text">Communication</span>
+              </a>
+              <ul class="collapse list-unstyled pl-4 w-100" id="ui-elements">
+                <li >
+                  <a  class="nav-link pl-3" href="https://mkash.wispman.net/index.php?_route=emails/list"><span class="ml-1 item-text">Emails</span></a>
+                </li>
+                <li >
+                  <a class="nav-link pl-3" href="https://mkash.wispman.net/index.php?_route=sms/list"><span class="ml-1 item-text">SMS</span></a>
+                </li>
+                <li >
+                  <a class="nav-link pl-3" href="https://mkash.wispman.net/index.php?_route=wispwa2/list"><span class="ml-1 item-text">Whatsapp</span></a>
+                </li>
+        
+              </ul>
+            </li>
+         
+
+            <li class="nav-item dropdown ">
+              <a href="#forms" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle nav-link ">
+                <i class="fe fe-users fe-20"></i>
+                <span class="ml-3 item-text">Clients</span>
+              </a>
+              <ul  class="collapse list-unstyled pl-4 w-100" id="forms">
+                <li >
+                  <a class="nav-link pl-3" href="https://mkash.wispman.net/index.php?_route=customers/add"><span class="ml-1 item-text">Add new client</span></a>
+                </li>
+                <li >
+                  <a class="nav-link pl-3" href="https://mkash.wispman.net/index.php?_route=customers/active"><span class="ml-1 item-text">Clients List</span></a>
+                </li>
+                <li >
+                  <a class="nav-link pl-3" href="https://mkash.wispman.net/index.php?_route=customers/hotspot"><span class="ml-1 item-text">Hotspot Clients</span></a>
+                </li>
+                <li >
+                  <a class="nav-link pl-3" href="https://mkash.wispman.net/index.php?_route=customers/pactive"><span class="ml-1 item-text">PPPOE Clients</span></a>
+                </li>
+                <li >
+                  <a class="nav-link pl-3" href="https://mkash.wispman.net/index.php?_route=customers/sactive"><span class="ml-1 item-text">STATIC Clients</span></a>
+                </li><li >
+                  <a class="nav-link pl-3" href="https://mkash.wispman.net/index.php?_route=leads"><span class="ml-1 item-text">Clients Lead</span></a>
+                </li>
+              </ul>
+            </li>
+            <li class="nav-item dropdown">
+              <a href="#tables" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle nav-link">
+                <i class="fe fe-grid fe-20"></i>
+                <span class="ml-3 item-text">Prepaid</span>
+              </a>
+              <ul class="collapse list-unstyled pl-4 w-100" id="tables">
+                <li >
+                  <a class="nav-link pl-3" href="https://mkash.wispman.net/index.php?_route=prepaid/list"><span class="ml-1 item-text">Prepaid Users</span></a>
+                </li>
+                <li >
+                  <a class="nav-link pl-3" href="https://mkash.wispman.net/index.php?_route=prepaid/voucher"><span class="ml-1 item-text">Prepaid Vouchers</span></a>
+                </li>
+                <li >
+                  <a class="nav-link pl-3" href="https://mkash.wispman.net/index.php?_route=prepaid/refill"><span class="ml-1 item-text">Refill Account</span></a>
+                </li>
+				<li >
+                  <a class="nav-link pl-3" href="https://mkash.wispman.net/index.php?_route=prepaid/recharge"><span class="ml-1 item-text">Recharge Account</span></a>
+                </li>
+              </ul>
+            </li>
+            <ul class="navbar-nav flex-fill w-100 mb-2">
+		       <li  class="nav-item w-100">
+              <a class="nav-link" href="https://mkash.wispman.net/index.php?_route=ticket/list">
+                <i class="fe fe-clipboard fe-16"></i>
+                <span class="ml-3 item-text">Tickets</span>
+                <span class="badge badge-pill badge-primary">New</span>
+              </a>
+            </li>
+              <li  class="nav-item w-100">
+              <a class="nav-link" href="https://mkash.wispman.net/index.php?_route=escalate/list">
+                <i class="fe fe-compass fe-16"></i>
+                <span class="ml-3 item-text">Escalate</span>
+                <span class="badge badge-pill badge-primary">New</span>
+              </a>
+            </li>
+             <li  class="nav-item w-100">
+              <a class="nav-link" href="https://mkash.wispman.net/index.php?_route=calender/list">
+                <i class="fe fe-credit-card fe-16"></i>
+                <span class="ml-3 item-text">Calender</span>
+                <span class="badge badge-pill badge-primary">New</span>
+              </a>
+            </li>
+          </ul>
+            <li class="nav-item dropdown">
+              <a href="#charts" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle nav-link">
+                <i class="fe fe-pie-chart fe-20"></i>
+                <span class="ml-3 item-text">Burst</span>
+              </a>
+              <ul class="collapse list-unstyled pl-4 w-100" id="charts">
+                <li >
+                  <a class="nav-link pl-3" href="https://mkash.wispman.net/index.php?_route=burst/add"><span class="ml-1 item-text">Add Burst</span></a>
+                </li>
+                <li >
+                  <a class="nav-link pl-3" href="https://mkash.wispman.net/index.php?_route=burst/list"><span class="ml-1 item-text">Burst List</span></a>
+                </li>
+
+              </ul>
+            </li>
+          </ul>
+      
+          <ul class="navbar-nav flex-fill w-100 mb-2">
+            <li class="nav-item dropdown">
+              <a href="#contact" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle nav-link">
+                <i class="fe fe-book fe-20"></i>
+                <span class="ml-3 item-text">Services</span>
+              </a>
+              <ul class="collapse list-unstyled pl-4 w-100" id="contact">
+			   <li >
+                <a class="nav-link pl-3" href="https://mkash.wispman.net/index.php?_route=services/static"><span class="ml-1">Static Plans</span></a></li>
+				 <li >
+                <a class="nav-link pl-3" href="https://mkash.wispman.net/index.php?_route=services/hotspot"><span class="ml-1">Hotspot Plans</span></a></li>
+				 <li >
+                <a class="nav-link pl-3" href="https://mkash.wispman.net/index.php?_route=services/pppoe"><span class="ml-1">PPPOE Plans</span></a></li>
+				<li >
+				<a class="nav-link pl-3" href="https://mkash.wispman.net/index.php?_route=bandwidth/list"><span class="ml-1">Bandwidth Plans</span></a></li>
+              </ul>
+            </li>
+            <li class="nav-item dropdown">
+              <a href="#profile" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle nav-link">
+                <i class="fe fe-user fe-20"></i>
+                <span class="ml-3 item-text">Payments</span>
+              </a>
+              <ul class="collapse list-unstyled pl-4 w-100" id="profile">
+			  	<li >
+                <a class="nav-link pl-3" href="https://mkash.wispman.net/index.php?_route=account/mpesa-transactions"><span class="ml-1">M-pesa Transactions</span></a></li>
+					<li >
+                <a class="nav-link pl-3" href="https://mkash.wispman.net/index.php?_route=account/mpesa-logs"><span class="ml-1">M-pesa Logs</span></a></li>
+					<li >
+                <a class="nav-link pl-3" href="https://mkash.wispman.net/index.php?_route=account/mpesa-reports"><span class="ml-1">M-Pesa reports</span></a></li>
+					<li >
+                <a class="nav-link pl-3" href="https://mkash.wispman.net/index.php?_route=account/mpesa-prepaid"><span class="ml-1">M-pesa Prepaid</span></a></li>
+                <li >
+                <a class="nav-link pl-3" href="https://mkash.wispman.net/index.php?_route=account/mpesa-status"><span class="ml-1">M-pesa Transaction Status</span></a></li>
+              </ul>
+            </li>
+            <li class="nav-item dropdown">
+              <a href="#fileman" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle nav-link">
+                <i class="fe fe-folder fe-20"></i>
+                <span class="ml-3 item-text">Reports</span>
+              </a>
+              <ul class="collapse list-unstyled pl-4 w-100" id="fileman">
+			  	<li >
+                <a class="nav-link pl-3" href="https://mkash.wispman.net/index.php?_route=reports/daily-report"><span class="ml-1">Daily Reports</span></a></li>
+					<li >
+                <a class="nav-link pl-3" href="https://mkash.wispman.net/index.php?_route=reports/by-period"><span class="ml-1">Period Reports</span></a></li>
+					<li >
+            <a class="nav-link pl-3" href="https://mkash.wispman.net/index.php?_route=reports/state-period"><span class="ml-1">Statement report</span></a></li>
+					<li >
+				<a class="nav-link pl-3" href="https://mkash.wispman.net/index.php?_route=reports/plan-report"><span class="ml-1">Plan reports</span></a></li>
+        <li >
+				<a class="nav-link pl-3" href="https://mkash.wispman.net/index.php?_route=reports/overdue-report"><span class="ml-1">Overdue Next 5days</span></a></li>
+              </ul>
+            </li>
+            <li class="nav-item dropdown">
+              <a href="#support" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle nav-link">
+                <i class="fe fe-compass fe-20"></i>
+                <span class="ml-3 item-text">Network</span>
+              </a>
+              <ul class="collapse list-unstyled pl-4 w-100" id="support">
+			  	<li >
+                <a class="nav-link pl-3" href="https://mkash.wispman.net/index.php?_route=routers/list"><span class="ml-1">Routers</span></a></li>
+					<li >
+                <a class="nav-link pl-3" href="https://mkash.wispman.net/index.php?_route=pool/list"><span class="ml-1">IP Pool</span></a></li>
+   
+              </ul>
+            </li>
+          </ul>
+
+          <ul class="navbar-nav flex-fill w-100 mb-2">
+            <li class="nav-item dropdown">
+              <a href="#pages" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle nav-link">
+                <i class="fe fe-file fe-20"></i>
+                <span class="ml-3 item-text">Static Pages</span>
+              </a>
+              <ul class="collapse list-unstyled pl-4 w-100 w-100" id="pages">
+                <li >
+                  <a class="nav-link pl-3" href="https://mkash.wispman.net/index.php?_route=pages/Voucher">
+                    <span class="ml-1 item-text">Voucher Template</span>
+                  </a></li>
+                </li>
+     
+              </ul>
+            </li>
+            <li class="nav-item dropdown">
+              <a href="#auth" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle nav-link">
+                <i class="fe fe-shield fe-20"></i>
+                <span class="ml-3 item-text">System Logs</span>
+              </a>
+              <ul class="collapse list-unstyled pl-4 w-100" id="auth">
+			  	<li >
+                <a class="nav-link pl-3" href="https://mkash.wispman.net/index.php?_route=logs/hotspot"><span class="ml-1">Hotspot logs</span></a></li>
+					<li >
+                <a class="nav-link pl-3" href="https://mkash.wispman.net/index.php?_route=logs/pppoe"><span class="ml-1">PPPOE Logs</span></a></li>
+					<li >
+                <a class="nav-link pl-3" href="https://mkash.wispman.net/index.php?_route=logs/login"><span class="ml-1">Activity logs</span></a></li>
+        
+              </ul>
+            </li>
+            <li  class="nav-item dropdown">
+              <a href="#layouts" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle nav-link">
+                <i class="fe fe-settings fe-20"></i>
+                <span class="ml-3 item-text">Settings</span>
+              </a>
+              <ul class="collapse list-unstyled pl-4 w-100" id="layouts">
+                <li >
+                  <a class="nav-link pl-3" href="https://mkash.wispman.net/index.php?_route=settings/app"><span class="ml-1 item-text">General Settings</span></a>
+                </li>
+                <li >
+                  <a class="nav-link pl-3" href="https://mkash.wispman.net/index.php?_route=settings/localisation"><span class="ml-1 item-text">Localisation</span></a>
+                </li>
+                <li >
+                  <a class="nav-link pl-3" href="https://mkash.wispman.net/index.php?_route=settings/users"><span class="ml-1 item-text">Administrator Users</span></a>
+                </li>
+                <li >
+                  <a class="nav-link pl-3" href="https://mkash.wispman.net/index.php?_route=settings/roles"><span class="ml-1 item-text">Administrator Roles</span></a>
+                </li>
+				<li >
+                  <a class="nav-link pl-3" href="https://mkash.wispman.net/index.php?_route=settings/system"><span class="ml-1 item-text">System Update</span></a>
+                </li>
+				<li >
+                  <a class="nav-link pl-3" href="https://mkash.wispman.net/index.php?_route=settings/payment"><span class="ml-1 item-text">Payment settings</span></a>
+                </li>
+				<li >
+                  <a class="nav-link pl-3" href="https://mkash.wispman.net/index.php?_route=settings/back"><span class="ml-1 item-text">Restore backup</span></a>
+                </li>
+				<li >
+                  <a class="nav-link pl-3" href="https://mkash.wispman.net/index.php?_route=settings/invoice"><span class="ml-1 item-text">Invoice settings</span></a>
+                </li>
+              </ul>
+            </li>
+          </ul>
+
+
+     
+        </nav>
+      </aside>
+
+	<main role="main" class="main-content">
+        <div class="container-fluid">
+          <div class="row justify-content-center">
+            <div class="col-12">
+            			
+
+				
+<div class="row justify-content-end">
+  <div class="col-auto">
+    <div class="form-row align-items-center mb-3">
+      <div class="col-auto">
+        <label for="router-selector" class="mb-0 mr-2 small font-weight-bold">Router:</label>
+      </div>
+      <div class="col-md-auto col-sm-auto" style="min-width: 200px;">
+        <select class="form-control form-control-sm" id="router-selector" onchange="changeRouter()">
+          <option value="">All Routers (2 total)</option>
+                      <option value="MKASH" >MKASH</option>
+                      <option value="MKASH-2" >MKASH-2</option>
+                  </select>
+      </div>
+      <div class="col-auto">
+        <span class="small text-muted">Selected: <span class="badge badge-primary" id="current-router">None</span></span>
+      </div>
+    </div>
+  </div>
+</div>
+
+                <div class="row">
+                <div class="col-md-6 col-xl-3 mb-4">
+                  <div class="card border-left-success shadow h-100">
+                    <div class="card-header">
+                      <span class="card-title font-weight-bold text-info text-uppercase">Income Today on   <span class="float-right d-block font-15 text-danger font-weight-500" id="day"></span></span>
+                    </div>
+                    <div class="card-body my-n2">
+                      <div class="d-flex">
+                        <div class="flex-fill">
+                          <h4 class="mb-0"> KSH.10</h4>
+                        </div>
+                        <div class="flex-fill text-right">
+                          <p class="mb-0 small">1 Entries</p>
+                          <p class="text-muted mb-0 small" ><a class="text"
+                            href="https://mkash.wispman.net/index.php?_route=reports/daily-report">View Reports</a>
+                    </p>
+                        </div>
+                      </div>
+                    </div> <!-- .card-body -->
+                  </div> <!-- .card -->
+                </div> <!-- .col -->
+                <div class="col-md-6 col-xl-3 mb-4" onclick="toggleMonthlyIncome()">
+                  <div class="card border-left-primary shadow mb-4 h-100">
+                  <div class="card-header">
+                    <span class="card-title font-weight-bold text-primary text-uppercase">Income This Month</span>
+                  </div>
+                  <div class="card-body my-n1">
+                    <div class="d-flex">
+                    <div class="flex-fill"  >
+                    <p class="mb0" id="tap_text">Tap here to view</p>
+                      <h4 class="mb-0" style="display:none;" id="hide_monthly">  KSH.1,550 </h4>
+                    </div>
+                       <div class="flex-fill text-right">
+                       <span class="sparkline inlinebar"></span>
+                      <p class="text-muted mb-0 small" ><a class="text-putih"
+                      href="https://mkash.wispman.net/index.php?_route=reports/by-period">View All</a></p>
+                    </div>
+                    </div>
+                  </div> <!-- .card-body -->
+                  </div> <!-- .card -->
+                </div> <!-- .col -->
+
+      
+               <div class="col-md-6 col-xl-3 mb-4">
+                  <div class="card border-left-info shadow mb-4 h-100">
+                    <div class="card-header">
+                      <span class="card-title font-weight-bold text-warning text-uppercase">Users Active</span>
+                       <span class="float-right fe fe-32 fe-user text-muted mb-0"></span>
+                     
+                    </div>
+                    <div class="card-body my-n1">
+                      <div class="d-flex">
+                        <div class="flex-fill">
+                          <h4 class="mb-0">5</h4>
+                        </div>
+                        <div class="flex-fill text-right">
+                            <span class="inlinepie"></span>
+                          <p class="text-muted mb-0 small" ><a class="text-putih"
+                            href="https://mkash.wispman.net/index.php?_route=prepaid/list2">View All</a></p>
+                        </div>
+                      </div>
+                    </div> <!-- .card-body -->
+                  </div> <!-- .card -->
+                </div> <!-- .col -->
+                 <div class="col-md-6 col-xl-3 mb-4">
+                  <div class="card border-left-warning shadow mb-4 h-100">
+                    <div class="card-header">
+                      <span class="card-title font-weight-bold text-success text-uppercase">Total Users</span>
+                       <span class="float-right fe fe-32 fe-users text-muted mb-0"></span>
+                      
+                    </div>
+                    <div class="card-body my-n1">
+                      <div class="d-flex">
+                        <div class="flex-fill">
+                          <h4 class="mb-0">193</h4>
+                        </div>
+                        <div class="flex-fill text-right">
+                            <span class="inlineline"></span>
+                          <p class="text-muted mb-0 small" ><a class="text-putih"
+                            href="https://mkash.wispman.net/index.php?_route=customers/list">View Reports</a></p>
+                        </div>
+                      </div>
+                    </div> <!-- .card-body -->
+                  </div> <!-- .card -->
+                </div> <!-- .col -->
+              </div><!-- .row -->
+
+              <div class="col-12">
+                  <div class="card border-bottom-primary shadow h-100">
+                    <div class="card-header">
+                      <span class="card-title font-weight-bold text-info text-uppercase">Tickets & Escalated issues  </span>
+                    </div>
+                    <div class="card-body">
+                        <div class="row ">
+                        <div class="col-3 text-center ">                         
+                          <span  class="  h4">0</span>
+                           <p class="color-glight" ><a class="medium item-text" href=""><strong>Open </strong></a></p>
+                        </div>
+                        <div class="col-3 text-center ">                       
+                          <span class="  h4">0</span>
+                             <p class="color-glight"><a class="medium item-text" href=""><strong>Pending </strong></a></p>
+                        </div>
+                        <div class="col-3 text-center">                        
+                          <span  class=" h4">0</span>
+                            <p class="color-glight" ><a class="medium item-text" href=""><strong>Solved</strong> </a></p>
+                        </div>
+                         <div class="col-3 text-center">                        
+                          <span  class=" h4">0</span>
+                            <p class="color-glight" ><a class="medium item-text " href=""><strong> All Tickets</strong> </a></p>
+                        </div>
+                      </div><!-- .row -->
+                      
+                    </div> <!-- .card-body -->
+                  </div> <!-- .card -->
+                </div> <!-- .col -->
+                <br>
+
+ <div class="row">
+                 <div class="col-md-6">
+                <div class="card shadow mb-4">
+                <div class="card-header bg-gradient-dark d-flex justify-content-between align-items-center">
+                <span class="card-title font-weight-bold text-uppercase mb-0 text-white">Clients Connection Overview</span>
+                <span class="badge badge-pill badge-primary" id="total-clients">Total: <span id="all-clients">193</span></span>
+                </div>
+                <div class="card-body p-0">
+                <!-- Account Status -->
+                <div class="border-bottom">
+                <div class="d-flex px-4 py-3">
+                <div class="mr-3">
+                <span class="fe fe-users h3 text-info"></span>
+                </div>
+                <div class="w-100">
+                <h6 class="text-uppercase text-muted mb-2 small">Account Status</h6>
+                <div class="row"> <!-- Row for Online, Offline, Overdue stats -->
+                <div class="col-md-4 mb-3"> <!-- Online -->
+                <div class="d-flex align-items-center mb-1">
+                <div class="mr-2">
+                <div class="rounded-circle bg-success d-flex align-items-center justify-content-center" style="width: 28px; height: 28px;">
+                <i class="fe fe-user-check text-white" style="font-size: 0.9rem;"></i>
+                </div>
+                </div>
+                <div>
+                <h4 class="m-0" id="connected">0</h4>
+                <p class="mb-0 small text-muted"><a href="https://mkash.wispman.net/index.php?_route=customers/connected">Online</a></p>
+                </div>
+                </div>
+                <div class="progress" style="height: 6px;">
+                <div id="online-progress-individual" class="progress-bar bg-success" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+                </div>
+                </div>
+
+                <div class="col-md-4 mb-3"> <!-- Offline -->
+                <div class="d-flex align-items-center mb-1">
+                <div class="mr-2">
+                <div class="rounded-circle bg-warning d-flex align-items-center justify-content-center" style="width: 28px; height: 28px;">
+                <i class="fe fe-user-x text-white" style="font-size: 0.9rem;"></i>
+                </div>
+                </div>
+                <div>
+                <h4 class="m-0" id="disconnected">0</h4>
+                <p class="mb-0 small text-muted"><a href="https://mkash.wispman.net/index.php?_route=customers/disconnected">Offline</a></p>
+                </div>
+                </div>
+                <div class="progress" style="height: 6px;">
+                <div id="offline-progress-individual" class="progress-bar bg-warning" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+                </div>
+                </div>
+
+                <div class="col-md-4 mb-3"> <!-- Overdue -->
+                <div class="d-flex align-items-center mb-1">
+                <div class="mr-2">
+                <div class="rounded-circle bg-danger d-flex align-items-center justify-content-center" style="width: 28px; height: 28px;">
+                <i class="fe fe-user-minus text-white" style="font-size: 0.9rem;"></i>
+                </div>
+                </div>
+                <div>
+                <h4 class="m-0" id="overdue">0</h4>
+                <p class="mb-0 small text-muted"><a href="https://mkash.wispman.net/index.php?_route=customers/overdue">Overdue</a></p>
+                </div>
+                </div>
+                <div class="progress" style="height: 6px;">
+                <div id="overdue-progress-individual" class="progress-bar bg-danger" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+                </div>
+                </div>
+                </div> <!-- End of row for Online, Offline, Overdue stats -->
+
+                 
+
+                </div> <!-- End of w-100 -->
+                </div> <!-- End of d-flex px-4 py-3 -->
+                </div> <!-- End of Account Status border-bottom -->
+
+            <!-- Account Status -->
+            <div class="border-bottom">
+              <div class="d-flex px-4 py-3">
+              <div class="mr-3">
+              <span class="fe fe-users h3 text-info"></span>
+              </div>
+              <div class="w-100">
+              <h6 class="text-uppercase text-muted mb-2 small">Account Status</h6>
+              <div class="row"> <!-- Row for Active, Inactive, Disabled stats -->
+              <div class="col-md-4 mb-3"> <!-- Active -->
+                <div class="d-flex align-items-center mb-1">
+                <div class="mr-2">
+                <div class="rounded-circle bg-success d-flex align-items-center justify-content-center" style="width: 28px; height: 28px;">
+                <i class="fe fe-user-check text-white" style="font-size: 0.9rem;"></i>
+                </div>
+                </div>
+                <div>
+                <h4 class="m-0" id="active">0</h4>
+                <p class="mb-0 small text-muted"><a href="https://mkash.wispman.net/index.php?_route=customers/active">Active</a></p>
+                </div>
+                </div>
+                <div class="progress" style="height: 6px;">
+                <div id="active-progress-individual" class="progress-bar bg-success" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+                </div>
+              </div>
+
+              <div class="col-md-4 mb-3"> <!-- Inactive -->
+                <div class="d-flex align-items-center mb-1">
+                <div class="mr-2">
+                <div class="rounded-circle bg-warning d-flex align-items-center justify-content-center" style="width: 28px; height: 28px;">
+                <i class="fe fe-user-x text-white" style="font-size: 0.9rem;"></i>
+                </div>
+                </div>
+                <div>
+                <h4 class="m-0" id="inactive">0</h4>
+                <p class="mb-0 small text-muted"><a href="https://mkash.wispman.net/index.php?_route=customers/inactive">Inactive</a></p>
+                </div>
+                </div>
+                <div class="progress" style="height: 6px;">
+                <div id="inactive-progress-individual" class="progress-bar bg-warning" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+                </div>
+              </div>
+
+              <div class="col-md-4 mb-3"> <!-- Disabled -->
+                <div class="d-flex align-items-center mb-1">
+                <div class="mr-2">
+                <div class="rounded-circle bg-danger d-flex align-items-center justify-content-center" style="width: 28px; height: 28px;">
+                <i class="fe fe-user-minus text-white" style="font-size: 0.9rem;"></i>
+                </div>
+                </div>
+                <div>
+                <h4 class="m-0" id="disabled">0</h4>
+                <p class="mb-0 small text-muted"><a href="https://mkash.wispman.net/index.php?_route=customers/disabled">Disabled</a></p>
+                </div>
+                </div>
+                <div class="progress" style="height: 6px;">
+                <div id="disabled-progress-individual" class="progress-bar bg-danger" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+                </div>
+              </div>
+              </div> <!-- End of row for Active, Inactive, Disabled stats -->
+
+           
+
+              </div> <!-- End of w-100 -->
+              </div> <!-- End of d-flex px-4 py-3 -->
+            </div> <!-- End of Account Status border-bottom -->
+
+            <!-- Hotspot Status -->
+            <div class="border-bottom">
+              <div class="d-flex px-4 py-3">
+              <div class="mr-3">
+                <span class="fe fe-radio h3 text-info"></span> <!-- Main Hotspot section icon -->
+              </div>
+              <div class="w-100">
+                <h6 class="text-uppercase text-muted mb-2 small">Hotspot Status</h6>
+                <div class="row"> <!-- Row for Online, Offline, Total Hotspot stats -->
+
+                <!-- Online Hotspot -->
+                <div class="col-md-4 mb-3">
+                  <div class="d-flex align-items-center mb-1">
+                  <div class="mr-2">
+                    <div class="rounded-circle bg-success d-flex align-items-center justify-content-center" style="width: 28px; height: 28px;">
+                    <i class="fe fe-user-check text-white" style="font-size: 0.9rem;"></i>
+                    </div>
+                  </div>
+                  <div>
+                    <h4 class="m-0" id="hotspot1">0</h4>
+                    <p class="mb-0 small text-muted"><a href="https://mkash.wispman.net/index.php?_route=customers/connected1">Online Hotspot</a></p>
+                  </div>
+                  </div>
+                  <div class="progress" style="height: 6px;">
+                  <div id="hotspot_online_progress_individual" class="progress-bar bg-success" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+                  </div>
+                </div>
+
+                <!-- Offline Hotspot -->
+                <div class="col-md-4 mb-3">
+                  <div class="d-flex align-items-center mb-1">
+                  <div class="mr-2">
+                    <div class="rounded-circle bg-warning d-flex align-items-center justify-content-center" style="width: 28px; height: 28px;">
+                    <i class="fe fe-user-x text-white" style="font-size: 0.9rem;"></i>
+                    </div>
+                  </div>
+                  <div>
+                    <h4 class="m-0" id="hotspot2">0</h4>
+                    <p class="mb-0 small text-muted"><a href="https://mkash.wispman.net/index.php?_route=customers/disconnected1">Offline Hotspot</a></p>
+                  </div>
+                  </div>
+                  <div class="progress" style="height: 6px;">
+                  <div id="hotspot_offline_progress_individual" class="progress-bar bg-warning" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+                  </div>
+                </div>
+
+                <!-- Total Hotspot Users -->
+                <div class="col-md-4 mb-3">
+                  <div class="d-flex align-items-center mb-1">
+                  <div class="mr-2">
+                    <div class="rounded-circle bg-info d-flex align-items-center justify-content-center" style="width: 28px; height: 28px;">
+                    <i class="fe fe-users text-white" style="font-size: 0.9rem;"></i>
+                    </div>
+                  </div>
+                  <div>
+                    <h4 class="m-0" id="hotspot">0</h4>
+                    <p class="mb-0 small text-muted"><a href="https://mkash.wispman.net/index.php?_route=customers/hotspot">Total Hotspot</a></p>
+                  </div>
+                  </div>
+                  <div class="progress" style="height: 6px;">
+                  <div id="hotspot_total_progress_individual" class="progress-bar bg-info" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+                  </div>
+                </div>
+
+                </div> <!-- End of row for Hotspot stats -->
+              </div> <!-- End of w-100 -->
+              </div> <!-- End of d-flex px-4 py-3 -->
+            </div> <!-- End of Hotspot Status border-bottom -->
+
+          <div class="card-footer bg-light">
+            <div class="d-flex align-items-center justify-content-between">
+            <span class="d-flex align-items-center">
+              <span class="fe fe-info text-info mr-2"></span>
+              <span class="small text-muted">Last updated: <span id="client-last-update">Just now</span></span>
+            </span>
+            <button class="btn btn-sm btn-outline-info" id="refresh-client-btn" onclick="refreshClientStats()">
+              <i class="fe fe-refresh-cw mr-1"></i>Refresh
+            </button>
+            </div>
+          </div>
+           </div>
+            </div>
+             </div>
+         
+        
+               <div class="col-md-6">
+  <div class="card shadow mb-4">
+    <div class="card-header d-flex justify-content-between align-items-center">
+      <strong class="card-title">Server Statistics</strong>
+      <span class="badge badge-pill" id="light">Online</span>
+    </div>
+    <div class="card-body">
+      <!-- CPU and uptime row -->
+      <div class="row mb-4">
+        <div class="col-md-6 border-right">
+          <div class="d-flex align-items-center mb-2">
+            <span class="fe fe-cpu text-primary mr-2" style="font-size: 1.5rem;"></span>
+            <div>
+              <h6 class="text-uppercase text-muted mb-0 small">Server CPU Load</h6>
+              <h4 id="cpu_load" class="mb-0">0%</h4>
+            </div>
+          </div>
+          <div class="progress" style="height: 6px;">
+            <div id="cpu_progress" class="progress-bar bg-primary" role="progressbar" style="width: 0%"></div>
+          </div>
+          <div class="d-flex justify-content-between mt-2 small text-muted">
+            <span id="server_cpu_freq">0 MHz</span>
+            <span id="server_os">Unknown</span>
+          </div>
+        </div>
+        
+        <div class="col-md-6">
+          <div class="d-flex align-items-center mb-2">
+            <span class="fe fe-cpu text-info mr-2" style="font-size: 1.5rem;"></span>
+            <div>
+              <h6 class="text-uppercase text-muted mb-0 small">MikroTik CPU</h6>
+              <h4 id="cpu_load_mikrotik" class="mb-0">0%</h4>
+            </div>
+          </div>
+          <div class="progress" style="height: 6px;">
+            <div id="cpu_progress_mikrotik" class="progress-bar bg-info" role="progressbar" style="width: 0%"></div>
+          </div>
+          <div class="d-flex justify-content-between mt-2 small text-muted">
+            <span id="cpu_freq">0 MHz</span>
+            <span id="platform">Unknown</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- System Info Row -->
+      <div class="row mb-4">
+        <div class="col-md-6">
+          <div class="d-flex align-items-center mb-2">
+            <span class="fe fe-clock text-success mr-2" style="font-size: 1.2rem;"></span>
+            <div>
+              <h6 class="text-uppercase text-muted mb-0 small">Server Uptime</h6>
+                <p id="server_uptime" class="mb-0 text-body">Unknown</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="d-flex align-items-center mb-2">
+            <span class="fe fe-router text-warning mr-2" style="font-size: 1.2rem;"></span>
+            <div>
+              <h6 class="text-uppercase text-muted mb-0 small">Router Uptime</h6>
+              <p id="uptime" class="mb-0 text-body">Unknown</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Router Info -->
+      <div class="row mb-3">
+        <div class="col-md-6">
+          <p class="text-muted small mb-0">Router: <span id="board_name" class="font-weight-bold">Unknown</span></p>
+        </div>
+        <div class="col-md-6">
+          <p class="text-muted small mb-0">Version: <span id="version" class="font-weight-bold">Unknown</span></p>
+        </div>
+      </div>
+      
+      <!-- Memory usage and gauges -->
+      <div class="row mb-3">
+        <!-- Memory usage -->
+        <div class="col-md-4">
+          <div class="card border-0 shadow-sm">
+        <div class="card-body text-center p-3">
+          <div class="gauge-container mx-auto mb-2" id="gauge1" style="height: 100px; width: 100px; position: relative;"></div>
+          <h6 class="text-uppercase text-muted small">Memory Usage</h6>
+          <div class="text-center">
+          <h4 id="progressbar" class="mb-0 text-primary">0%</h4>
+          <small class="text-muted">RAM</small>
+          </div>
+          <div class="d-flex justify-content-between mt-2">
+          <div class="text-center">
+        <small id="server_free_mem" class="text-muted">0</small>
+        <br><small class="text-muted">Free</small>
+          </div>
+          <div class="text-center">
+        <small id="server_total_mem" class="text-muted">0</small>
+        <br><small class="text-muted">Total</small>
+          </div>
+          </div>
+        </div>
+          </div>
+        </div>
+        
+        <!-- Disk usage -->
+        <div class="col-md-4">
+          <div class="card border-0 shadow-sm">
+            <div class="card-body text-center p-3">
+              <div class="gauge-container mx-auto mb-2" id="gauge2" style="height: 100px; width: 100px;"></div>
+              <h6 class="text-uppercase text-muted small">Disk Usage</h6>
+              <div class="text-center">
+                <h4 id="percent" class="mb-0 text-success">0%</h4>
+                <small class="text-muted">Used</small>
+              </div>
+              <div class="d-flex justify-content-between mt-2">
+                <div class="text-center">
+                  <small id="freespace" class="text-muted">0 GB</small>
+                  <br><small class="text-muted">Free</small>
+                </div>
+                <div class="text-center">
+                  <small id="totalspace" class="text-muted">0 GB</small>
+                  <br><small class="text-muted">Total</small>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Router Memory/HDD -->
+        <div class="col-md-4">
+          <div class="card border-0 shadow-sm">
+            <div class="card-body text-center p-3">
+              <div class="gauge-container mx-auto mb-2" id="gauge3" style="height: 100px; width: 100px;"></div>
+              <h6 class="text-uppercase text-muted small">Router Memory</h6>
+              <div class="text-center">
+                <h4 id="memperc" class="mb-0 text-warning">0%</h4>
+                <small class="text-muted">Used</small>
+              </div>
+              <div class="d-flex justify-content-between mt-2">
+                <div class="text-center">
+                  <small id="free_mem" class="text-muted">0</small>
+                  <br><small class="text-muted">Free</small>
+                </div>
+                <div class="text-center">
+                  <small id="total_mem" class="text-muted">0</small>
+                  <br><small class="text-muted">Total</small>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Router HDD Info (if available) -->
+      <div class="row mb-3">
+        <div class="col-md-6">
+          <div class="d-flex justify-content-between align-items-center p-2 bg-light rounded">
+            <span class="small text-muted">Router HDD Usage:</span>
+            <span id="hddperc" class="small font-weight-bold">0%</span>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="d-flex justify-content-between small text-muted">
+            <span>Free: <span id="free_hdd" class="text-muted">0</span></span>
+            <span>Total: <span id="total_hdd" class="text-darmutedk">0</span></span>
+          </div>
+        </div>
+      </div>
+      
+      <!-- System info -->
+      <div class="alert alert-info mb-0 d-flex align-items-center">
+        <span class="fe fe-info text-info mr-2"></span>
+        <span>Last updated: <span id="last_update">Just now</span></span>
+        <button class="btn btn-sm btn-outline-info ml-auto" onclick="refreshServerStats()">
+          <i class="fe fe-refresh-cw mr-1"></i>Refresh
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+               
+              </div> <!-- .row -->
+
+           
+
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="card shadow mb-4">
+                    <div class="card-header">
+                      <strong>Main Traffic</strong>
+                    </div>
+                    <div class="card-body px-4">
+                    <div id="container" style=" height: 400px; margin: 0 auto  "></div>
+                    <div name="interface" id="interface" type="text">
+                        <div id="traffic"></div>
+
+                    </div>
+                    <!-- Up -->
+                    <small id="traffic4" class=" ml-3" style="color: #3498db; "><i class=" fas fa-arrow-up pr-1"
+                            style="color: #3498db;"></i></small>
+
+                    <!-- Down -->
+                    <small id="traffic5" class=" ml-3" style="color: #34dbd8; "><i class=" fas fa-arrow-down pr-1"
+                            style="color: #34dbd8;"></i></small>
+
+             </div> <!-- / .card-body -->
+                  </div> <!-- .card -->
+                </div> <!-- .col -->
+           
+                <div class="col-md-6 ">
+                  <div class="card shadow">
+                    <div class="card-header">
+                      <strong>Weekly Traffic</strong>
+                    </div>
+                    <div class="card-body px-4">
+                     <div id="container1" style=" height: 400px; margin: 0 auto  "></div>
+                    <div name="interface1" id="interface1" type="text">
+                        <div id="traffic1"></div>
+
+                    </div>
+                    <!-- Up -->
+                    <small id="traffic6" class=" ml-3" style="color: #3498db; "><i class=" fas fa-arrow-up pr-1"
+                            style="color: #3498db;"></i></small>
+
+                    <!-- Down -->
+                    <small id="traffic7" class=" ml-3" style="color: #34dbd8; "><i class=" fas fa-arrow-down pr-1"
+                            style="color: #34dbd8;"></i></small>
+
+             </div> <!-- / .card-body -->
+                  </div> <!-- .card -->
+                </div> <!-- .col -->
+              </div> <!-- .row -->
+
+
+
+
+              <div class="row">
+                <!-- simple table -->
+                <div class="col-md-6 my-4">
+                  <div class="card shadow">
+                    <div class="card-body">
+                      <h5 class="card-title">Top Downloaders</h5>
+                      <table class="table table-hover">
+                        <thead>
+                                <tr>
+                                    <th>Id</th>
+                                    <th>Name</th>
+                                    <th>Full name</th>
+                                    <th>Upload</th>
+                                    <th>Download</th>
+                                    
+                                </tr>
+                            </thead>
+                        <tbody>
+                                                           <tr>
+                                    <td>43</td>
+                                    <td>BA:F5:57:6D:9B:E5</td>
+                                    <td></td>
+                                    <td>196.26 Mbs</td>
+                                    <td>2.98 Gbs</td>
+                                </tr>
+                                                                <tr>
+                                    <td>198</td>
+                                    <td>0A:32:18:19:3F:70</td>
+                                    <td></td>
+                                    <td>125.01 Mbs</td>
+                                    <td>2.53 Gbs</td>
+                                </tr>
+                                                                <tr>
+                                    <td>149</td>
+                                    <td>32:2A:1B:92:A1:9D</td>
+                                    <td></td>
+                                    <td>96.56 Mbs</td>
+                                    <td>2.52 Gbs</td>
+                                </tr>
+                                                                <tr>
+                                    <td>157</td>
+                                    <td>42:DA:3B:6C:A9:DF</td>
+                                    <td></td>
+                                    <td>82.8 Mbs</td>
+                                    <td>2.44 Gbs</td>
+                                </tr>
+                                                                <tr>
+                                    <td>140</td>
+                                    <td>DE:CB:FC:2D:3D:F0</td>
+                                    <td></td>
+                                    <td>89.75 Mbs</td>
+                                    <td>2.03 Gbs</td>
+                                </tr>
+                                                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div> <!-- simple table -->
+                 <div class="col-md-6 my-4">
+                  <div class="card shadow">
+                    <div class="card-body">
+                      <h5 class="card-title">SMS Statistics</h5>
+                       <div class="row border-top">
+                        <div class="col-md-6 pt-4">
+                          <h4 class="mb-0">0 <span class="small text-muted">+37.7%</span></h4>
+                          <p class="mb-0 text-muted">pending sms</p>
+                        </div>
+                        <div class="col-md-6 pt-4">
+                          <h4 class="mb-0">0 <span class="small text-muted">-18.9%</span></h4>
+                          <p class="mb-0 text-muted">Sent this month</p>
+                        </div>
+                         </div> <!-- .row -->
+                         <a class="float-right medium text-muted" href="https://mkash.wispman.net/index.php?_route=sms/list">SMS logs</a>
+                    
+                     
+                    </div>
+                  </div><br>
+
+
+                  <div class="card shadow">
+                    <div class="card-body">
+                      <h5 class="card-title">Email Statistics</h5>
+                       <div class="row border-top">
+                        <div class="col-md-6 pt-4">
+                          <h4 class="mb-0">0 </h4>
+                          <p class="mb-0 text-muted">pending emails</p>
+                        </div>
+                        <div class="col-md-6 pt-4">
+                          <h4 class="mb-0">0 </h4>
+                          <p class="mb-0 text-muted">Sent this month</p>
+                        </div>
+                         </div> <!-- .row -->
+                         <a class="float-right medium text-muted" href="https://mkash.wispman.net/index.php?_route=emails/list">Email logs</a>
+                    
+                     
+                    </div>
+                  </div>
+                </div> <!-- simple table -->
+                </div> <!-- end section -->
+
+
+                 <div class="row">
+                <!-- simple table -->
+                <div class="col-md-6 my-4">
+                  <div class="card shadow">
+                    <div class="card-body">
+                      <h5 class="card-title">Overdue invoices by today</h5>
+                      <table class="table table-hover">
+                        <thead>
+                          <tr>
+                                    <th>Id</th>
+                                    <th>Account</th>
+                                    <th>Full name</th>
+                                    <th>Status</th>
+                                    <th>Expires On</th>
+                                </tr>
+                        <tbody>
+                                                  </tbody>
+                      </table>
+                       <a class="float-right medium text-muted" href="https://mkash.wispman.net/index.php?_route=reports/overdue-report">View more</a>
+                    </div>                   
+                  </div>                   
+                </div> <!-- simple table -->
+                 <div class="col-md-6 my-4">
+                  <div class="card shadow">
+                    <div class="card-body">
+                      <h5 class="card-title">Recent Mpesa Transactions</h5>
+                      
+                      <table class="table table-hover">
+                        <thead>
+                          <tr>
+                                    <th>Id</th>
+                                    <th>FirstName</th>
+                                    <th>TransID</th>
+                                    <th>Amount</th>
+                                    <th>Created at</th>
+                                </tr>
+                        </thead>
+                        <tbody>
+                                                         <tr>
+                                    <td>745</td>
+                                    <td></td>
+                                    <td>THC1ZH30U1</td>
+                                    <td>10.00</td>
+                                    <td>2025-08-12 10:42:23</td>
+                                </tr>
+                                                                <tr>
+                                    <td>744</td>
+                                    <td></td>
+                                    <td>THC1ZGP6QD</td>
+                                    <td>10.00</td>
+                                    <td>2025-08-12 10:39:55</td>
+                                </tr>
+                                                                <tr>
+                                    <td>743</td>
+                                    <td></td>
+                                    <td>THB4X6QZW2</td>
+                                    <td>10.00</td>
+                                    <td>2025-08-11 19:16:38</td>
+                                </tr>
+                                                                <tr>
+                                    <td>742</td>
+                                    <td></td>
+                                    <td>THB0X02QN6</td>
+                                    <td>10.00</td>
+                                    <td>2025-08-11 18:52:50</td>
+                                </tr>
+                                                                <tr>
+                                    <td>741</td>
+                                    <td></td>
+                                    <td>THB7W4SI7X</td>
+                                    <td>10.00</td>
+                                    <td>2025-08-11 16:32:05</td>
+                                </tr>
+                                                        </tbody>
+                      </table>
+                      <a class="float-right small text-muted" href="https://mkash.wispman.net/index.php?_route=account/mpesa-transactions">View all</a>
+                    </div>
+                  </div>
+                </div> <!-- simple table -->
+                </div> <!-- end section -->
+
+        
+
+
+
+
+
+
+
+ <div class="modal fade modal-notif modal-slide" tabindex="-1" role="dialog" aria-labelledby="defaultModalLabel" aria-hidden="true">
+          <div class="modal-dialog modal-sm" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="defaultModalLabel">Notifications</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <div class="modal-body">
+                <div class="list-group list-group-flush my-n3">
+                  <div class="list-group-item bg-transparent">
+                    <div class="row align-items-center">
+                      <div class="col-auto">
+                        <span class="fe fe-box fe-24"></span>
+                      </div>
+                      <div class="col">
+                        <small><strong>Package has uploaded successfull</strong></small>
+                        <div class="my-0 text-muted small">Package is zipped and uploaded</div>
+                        <small class="badge badge-pill badge-light text-muted">1m ago</small>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="list-group-item bg-transparent">
+                    <div class="row align-items-center">
+                      <div class="col-auto">
+                        <span class="fe fe-download fe-24"></span>
+                      </div>
+                      <div class="col">
+                        <small><strong>Widgets are updated successfull</strong></small>
+                        <div class="my-0 text-muted small">Just create new layout Index, form, table</div>
+                        <small class="badge badge-pill badge-light text-muted">2m ago</small>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="list-group-item bg-transparent">
+                    <div class="row align-items-center">
+                      <div class="col-auto">
+                        <span class="fe fe-inbox fe-24"></span>
+                      </div>
+                      <div class="col">
+                        <small><strong>Notifications have been sent</strong></small>
+                        <div class="my-0 text-muted small">Fusce dapibus, tellus ac cursus commodo</div>
+                        <small class="badge badge-pill badge-light text-muted">30m ago</small>
+                      </div>
+                    </div> <!-- / .row -->
+                  </div>
+                  <div class="list-group-item bg-transparent">
+                    <div class="row align-items-center">
+                      <div class="col-auto">
+                        <span class="fe fe-link fe-24"></span>
+                      </div>
+                      <div class="col">
+                        <small><strong>Link was attached to menu</strong></small>
+                        <div class="my-0 text-muted small">New layout has been attached to the menu</div>
+                        <small class="badge badge-pill badge-light text-muted">1h ago</small>
+                      </div>
+                    </div>
+                  </div> <!-- / .row -->
+                </div> <!-- / .list-group -->
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary btn-block" data-dismiss="modal">Clear All</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal fade modal-shortcut modal-slide" tabindex="-1" role="dialog" aria-labelledby="defaultModalLabel" aria-hidden="true">
+          <div class="modal-dialog" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="defaultModalLabel">Shortcuts</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <div class="modal-body px-5">
+                <div class="row align-items-center">
+                  <div class="col-6 text-center">
+                    <div class="squircle bg-success justify-content-center">
+                      <i class="fe fe-cpu fe-32 align-self-center text-white"></i>
+                    </div>
+                    <p>Control area</p>
+                  </div>
+                  <div class="col-6 text-center">
+                    <div class="squircle bg-primary justify-content-center">
+                      <i class="fe fe-activity fe-32 align-self-center text-white"></i>
+                    </div>
+                    <p>Activity</p>
+                  </div>
+                </div>
+                <div class="row align-items-center">
+                  <div class="col-6 text-center">
+                    <div class="squircle bg-primary justify-content-center">
+                      <i class="fe fe-droplet fe-32 align-self-center text-white"></i>
+                    </div>
+                    <p>Droplet</p>
+                  </div>
+                  <div class="col-6 text-center">
+                    <div class="squircle bg-primary justify-content-center">
+                      <i class="fe fe-upload-cloud fe-32 align-self-center text-white"></i>
+                    </div>
+                    <p>Upload</p>
+                  </div>
+                </div>
+                <div class="row align-items-center">
+                  <div class="col-6 text-center">
+                    <div class="squircle bg-primary justify-content-center">
+                      <i class="fe fe-users fe-32 align-self-center text-white"></i>
+                    </div>
+                    <p>Users</p>
+                  </div>
+                  <div class="col-6 text-center">
+                    <div class="squircle bg-primary justify-content-center">
+                      <i class="fe fe-settings fe-32 align-self-center text-white"></i>
+                    </div>
+                    <p>Settings</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main> <!-- main -->
+    </div> <!-- .wrapper -->
+    <script src="https://mkash.wispman.net/ui/theme/default/scripts/jquery.min.js"></script>
+    <script src="https://mkash.wispman.net/ui/theme/default/scripts/popper.min.js"></script>
+    <script src="https://mkash.wispman.net/ui/theme/default/scripts/moment.min.js"></script>
+    <script src="https://mkash.wispman.net/ui/theme/default/scripts/bootstrap.min.js"></script>
+    <script src="https://mkash.wispman.net/ui/theme/default/scripts/simplebar.min.js"></script>
+    <script src='https://mkash.wispman.net/ui/theme/default/scripts/daterangepicker.js'></script>
+    <script src='https://mkash.wispman.net/ui/theme/default/scripts/jquery.stickOnScroll.js'></script>
+    <script src="https://mkash.wispman.net/ui/theme/default/scripts/tinycolor-min.js"></script>
+    <script src="https://mkash.wispman.net/ui/theme/default/scripts/config.js"></script>
+    <script src="https://mkash.wispman.net/ui/theme/default/scripts/d3.min.js"></script>
+    <script src="https://mkash.wispman.net/ui/theme/default/scripts/topojson.min.js"></script>
+    <script src="https://mkash.wispman.net/ui/theme/default/scripts/datamaps.all.min.js"></script>
+    <script src="https://mkash.wispman.net/ui/theme/default/scripts/datamaps-zoomto.js"></script>
+    <script src="https://mkash.wispman.net/ui/theme/default/scripts/datamaps.custom.js"></script>
+    <script src="https://mkash.wispman.net/ui/theme/default/scripts/Chart.min.js"></script>
+		<script src="https://mkash.wispman.net/ui/theme/default/scripts/jquery.dataTables.min.js"></script>
+	<script src="https://mkash.wispman.net/ui/theme/default/scripts/dataTables.bootstrap5.min.js"></script>
+	<script src="https://cdn.datatables.net/select/1.3.4/js/dataTables.select.min.js"></script>
+  <!--<script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>-->  
+  <!--<script src="https://code.jquery.com/jquery-3.7.0.js"></script>-->
+  <script src="https://mkash.wispman.net/ui/theme/default/scripts/sweetalert2.all.min.js"></script>
+  <script src="https://mkash.wispman.net/ui/theme/default/scripts/custom.js"></script>
+  <script src="ui/theme/default/scripts/password.js"></script>
+  <script src='https://mkash.wispman.net/ui/theme/default/scripts/select2.min.js'></script>
+    <script src="https://mkash.wispman.net/ui/theme/default/scripts/gauge.min.js"></script>
+    <script src="https://mkash.wispman.net/ui/theme/default/scripts/jquery.sparkline.min.js"></script>
+    <script src="https://mkash.wispman.net/ui/theme/default/scripts/apexcharts.min.js"></script>
+    <script src="https://mkash.wispman.net/ui/theme/default/scripts/apexcharts.custom.js"></script>
+    <script src="https://mkash.wispman.net/ui/theme/default/scripts/apps.js"></script>
+<script src="https://code.highcharts.com/modules/exporting.js"></script>
+     <script src='https://mkash.wispman.net/ui/theme/default/scripts/jquery.mask.min.js'></script>
+    <script src='https://mkash.wispman.net/ui/theme/default/scripts/jquery.steps.min.js'></script>
+    <script src='https://mkash.wispman.net/ui/theme/default/scripts/jquery.validate.min.js'></script>
+    <script src='https://mkash.wispman.net/ui/theme/default/scripts/jquery.timepicker.js'></script>
+    <script src='https://mkash.wispman.net/ui/theme/default/scripts/dropzone.min.js'></script>
+    <script src='https://mkash.wispman.net/ui/theme/default/scripts/uppy.min.js'></script>
+    <script src='https://mkash.wispman.net/ui/theme/default/scripts/quill.min.js'></script>
+    <script src='https://mkash.wispman.net/ui/theme/default/scripts/fullcalendar.js'></script>
+    <script src='https://mkash.wispman.net/ui/theme/default/scripts/fullcalendar.custom.js'></script>
+    <!-- Add these before your closing </body> tag -->
+<script src="https://code.highcharts.com/highcharts.js"></script>
+<script src="https://code.highcharts.com/highcharts-more.js"></script>
+<script src="https://code.highcharts.com/modules/solid-gauge.js"></script>
+    
+<!-- Bootstrap JS -->
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+	<!-- Bootstrap Waiting For Script -->
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-waitingfor/1.2.9/bootstrap-waitingfor.min.js"></script>
+
+<script type="text/javascript" src="ui/theme/default/scripts/index2.js"></script>
+
+
+
+<script type="text/javascript" src="ui/theme/default/scripts/index.js"></script>
+
+  </body>
+</html>
+
+
+
+there will also be a super admin backend where he will have control of alll the fronts, user and subprovider. here he will set the payment gateway for the subprovider where his clients funds will mbe deposited when they buy the plan subscription . the super admin will also add/control subdomain mikrotik routers. also, add the controls where super admin will be controlling the above subproviders source..
+
+
+in a real situation, ahotspot user will connect to the wifi/ the mikrotik ether port set to be intergarted to hotspot, then, he is redirected to the captive portal, which will be hosted in my server, then he chooses the package, selects pay with mpesa, then he inputs his phone number, then an stk push is sent to him, he inputs his pin and when the payment is successfull, a mikrotik session is opened and the user is added, through the seesion id, where he will be connected to the internet for the period of the plan he has chosed. if it expires, he gets disconnected, until he buys another package. the subprovider is sent the active session, the router where the user has been connected to,  todays revenue, monthly revenue, all time revenue.etc.
+just find a way on how the super admin will connet to the remote router, etc.  
+
+just a thought, maybe the admin will have this as an idea
+
+
+
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta name="theme-color" content="#000000" />
+        <meta name="description" content="A product of emergent.sh" />
+        <!--
+      manifest.json provides metadata used when your web app is installed on a
+      user's mobile device or desktop. See https://developers.google.com/web/fundamentals/web-app-manifest/
+    -->
+        <!--
+      Notice the use of  in the tags above.
+      It will be replaced with the URL of the `public` folder during the build.
+      Only files inside the `public` folder can be referenced from the HTML.
+
+      Unlike "/favicon.ico" or "favicon.ico", "/favicon.ico" will
+      work correctly both with client-side routing and a non-root public URL.
+      Learn how to configure a non-root public URL by running `npm run build`.
+    -->
+        <title>mkash| Fullstack App</title>
+    <script defer src="/static/js/bundle.js"></script></head>
+    <body>
+        <noscript>You need to enable JavaScript to run this app.</noscript>
+        <div id="root"></div>
+        <!--
+      This HTML file is a template.
+      If you open it directly in the browser, you will see an empty page.
+
+      You can add webfonts, meta tags, or analytics to this file.
+      The build step will place the bundled scripts into the <body> tag.
+
+      To begin the development, run `npm start` or `yarn start`.
+      To create a production bundle, use `npm run build` or `yarn build`.
+    -->
+        <a
+            id="emergent-badge"
+            target="_blank"
+            href="https://app.emergent.sh/?utm_source=emergent-badge"
+            style="
+                display: flex !important;
+                align-items: center !important;
+                position: fixed !important;
+                bottom: 20px;
+                right: 20px;
+                text-decoration: none;
+                padding: 6px 10px;
+                font-family: -apple-system, BlinkMacSystemFont,
+                    &quot;Segoe UI&quot;, Roboto, Oxygen, Ubuntu, Cantarell,
+                    &quot;Open Sans&quot;, &quot;Helvetica Neue&quot;,
+                    sans-serif !important;
+                font-size: 12px !important;
+                z-index: 9999 !important;
+                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15) !important;
+                border-radius: 8px !important;
+                background-color: #ffffff !important;
+                border: 1px solid rgba(255, 255, 255, 0.25) !important;
+            "
+        >
+            <div
+                style="display: flex; flex-direction: row; align-items: center"
+            >
+                <img
+                    style="width: 20px; height: 20px; margin-right: 8px"
+                    src="https://avatars.githubusercontent.com/in/1201222?s=120&u=2686cf91179bbafbc7a71bfbc43004cf9ae1acea&v=4"
+                />
+                <p
+                    style="
+                        color: #000000;
+                        font-family: -apple-system, BlinkMacSystemFont,
+                            &quot;Segoe UI&quot;, Roboto, Oxygen, Ubuntu,
+                            Cantarell, &quot;Open Sans&quot;,
+                            &quot;Helvetica Neue&quot;, sans-serif !important;
+                        font-size: 12px !important;
+                        align-items: center;
+                        margin-bottom: 0;
+                    "
+                >
+                    
+                </p>
+            </div>
+        </a>
+        <script>
+            !(function (t, e) {
+                var o, n, p, r;
+                e.__SV ||
+                    ((window.posthog = e),
+                    (e._i = []),
+                    (e.init = function (i, s, a) {
+                        function g(t, e) {
+                            var o = e.split(".");
+                            2 == o.length && ((t = t[o[0]]), (e = o[1])),
+                                (t[e] = function () {
+                                    t.push(
+                                        [e].concat(
+                                            Array.prototype.slice.call(
+                                                arguments,
+                                                0,
+                                            ),
+                                        ),
+                                    );
+                                });
+                        }
+                        ((p = t.createElement("script")).type =
+                            "text/javascript"),
+                            (p.crossOrigin = "anonymous"),
+                            (p.async = !0),
+                            (p.src =
+                                s.api_host.replace(
+                                    ".i.posthog.com",
+                                    "-assets.i.posthog.com",
+                                ) + "/static/array.js"),
+                            (r =
+                                t.getElementsByTagName(
+                                    "script",
+                                )[0]).parentNode.insertBefore(p, r);
+                        var u = e;
+                        for (
+                            void 0 !== a ? (u = e[a] = []) : (a = "posthog"),
+                                u.people = u.people || [],
+                                u.toString = function (t) {
+                                    var e = "posthog";
+                                    return (
+                                        "posthog" !== a && (e += "." + a),
+                                        t || (e += " (stub)"),
+                                        e
+                                    );
+                                },
+                                u.people.toString = function () {
+                                    return u.toString(1) + ".people (stub)";
+                                },
+                                o =
+                                    "init me ws ys ps bs capture je Di ks register register_once register_for_session unregister unregister_for_session Ps getFeatureFlag getFeatureFlagPayload isFeatureEnabled reloadFeatureFlags updateEarlyAccessFeatureEnrollment getEarlyAccessFeatures on onFeatureFlags onSurveysLoaded onSessionId getSurveys getActiveMatchingSurveys renderSurvey canRenderSurvey canRenderSurveyAsync identify setPersonProperties group resetGroups setPersonPropertiesForFlags resetPersonPropertiesForFlags setGroupPropertiesForFlags resetGroupPropertiesForFlags reset get_distinct_id getGroups get_session_id get_session_replay_url alias set_config startSessionRecording stopSessionRecording sessionRecordingStarted captureException loadToolbar get_property getSessionProperty Es $s createPersonProfile Is opt_in_capturing opt_out_capturing has_opted_in_capturing has_opted_out_capturing clear_opt_in_out_capturing Ss debug xs getPageViewId captureTraceFeedback captureTraceMetric".split(
+                                        " ",
+                                    ),
+                                n = 0;
+                            n < o.length;
+                            n++
+                        )
+                            g(u, o[n]);
+                        e._i.push([i, s, a]);
+                    }),
+                    (e.__SV = 1));
+            })(document, window.posthog || []);
+            posthog.init("phc_yJW1VjHGGwmCbbrtczfqqNxgBDbhlhOWcdzcIJEOTFE", {
+                api_host: "https://us.i.posthog.com",
+                person_profiles: "identified_only", // or 'always' to create profiles for anonymous users as well
+            });
+        </script>
+    </body>
+</html>
+
+
+
+hotspot users
+
+
+
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta name="theme-color" content="#000000" />
+        <meta name="description" content="A product of emergent.sh" />
+        <!--
+      manifest.json provides metadata used when your web app is installed on a
+      user's mobile device or desktop. See https://developers.google.com/web/fundamentals/web-app-manifest/
+    -->
+        <!--
+      Notice the use of  in the tags above.
+      It will be replaced with the URL of the `public` folder during the build.
+      Only files inside the `public` folder can be referenced from the HTML.
+
+      Unlike "/favicon.ico" or "favicon.ico", "/favicon.ico" will
+      work correctly both with client-side routing and a non-root public URL.
+      Learn how to configure a non-root public URL by running `npm run build`.
+    -->
+        <title>mkash| Fullstack App</title>
+    <script defer src="/static/js/bundle.js"></script></head>
+    <body>
+        <noscript>You need to enable JavaScript to run this app.</noscript>
+        <div id="root"></div>
+        <!--
+      This HTML file is a template.
+      If you open it directly in the browser, you will see an empty page.
+
+      You can add webfonts, meta tags, or analytics to this file.
+      The build step will place the bundled scripts into the <body> tag.
+
+      To begin the development, run `npm start` or `yarn start`.
+      To create a production bundle, use `npm run build` or `yarn build`.
+    -->
+        <a
+            id="emergent-badge"
+            target="_blank"
+            href="https://app.emergent.sh/?utm_source=emergent-badge"
+            style="
+                display: flex !important;
+                align-items: center !important;
+                position: fixed !important;
+                bottom: 20px;
+                right: 20px;
+                text-decoration: none;
+                padding: 6px 10px;
+                font-family: -apple-system, BlinkMacSystemFont,
+                    &quot;Segoe UI&quot;, Roboto, Oxygen, Ubuntu, Cantarell,
+                    &quot;Open Sans&quot;, &quot;Helvetica Neue&quot;,
+                    sans-serif !important;
+                font-size: 12px !important;
+                z-index: 9999 !important;
+                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15) !important;
+                border-radius: 8px !important;
+                background-color: #ffffff !important;
+                border: 1px solid rgba(255, 255, 255, 0.25) !important;
+            "
+        >
+            <div
+                style="display: flex; flex-direction: row; align-items: center"
+            >
+                <img
+                    style="width: 20px; height: 20px; margin-right: 8px"
+                    src="https://avatars.githubusercontent.com/in/1201222?s=120&u=2686cf91179bbafbc7a71bfbc43004cf9ae1acea&v=4"
+                />
+                <p
+                    style="
+                        color: #000000;
+                        font-family: -apple-system, BlinkMacSystemFont,
+                            &quot;Segoe UI&quot;, Roboto, Oxygen, Ubuntu,
+                            Cantarell, &quot;Open Sans&quot;,
+                            &quot;Helvetica Neue&quot;, sans-serif !important;
+                        font-size: 12px !important;
+                        align-items: center;
+                        margin-bottom: 0;
+                    "
+                >
+                    
+                </p>
+            </div>
+        </a>
+        <script>
+            !(function (t, e) {
+                var o, n, p, r;
+                e.__SV ||
+                    ((window.posthog = e),
+                    (e._i = []),
+                    (e.init = function (i, s, a) {
+                        function g(t, e) {
+                            var o = e.split(".");
+                            2 == o.length && ((t = t[o[0]]), (e = o[1])),
+                                (t[e] = function () {
+                                    t.push(
+                                        [e].concat(
+                                            Array.prototype.slice.call(
+                                                arguments,
+                                                0,
+                                            ),
+                                        ),
+                                    );
+                                });
+                        }
+                        ((p = t.createElement("script")).type =
+                            "text/javascript"),
+                            (p.crossOrigin = "anonymous"),
+                            (p.async = !0),
+                            (p.src =
+                                s.api_host.replace(
+                                    ".i.posthog.com",
+                                    "-assets.i.posthog.com",
+                                ) + "/static/array.js"),
+                            (r =
+                                t.getElementsByTagName(
+                                    "script",
+                                )[0]).parentNode.insertBefore(p, r);
+                        var u = e;
+                        for (
+                            void 0 !== a ? (u = e[a] = []) : (a = "posthog"),
+                                u.people = u.people || [],
+                                u.toString = function (t) {
+                                    var e = "posthog";
+                                    return (
+                                        "posthog" !== a && (e += "." + a),
+                                        t || (e += " (stub)"),
+                                        e
+                                    );
+                                },
+                                u.people.toString = function () {
+                                    return u.toString(1) + ".people (stub)";
+                                },
+                                o =
+                                    "init me ws ys ps bs capture je Di ks register register_once register_for_session unregister unregister_for_session Ps getFeatureFlag getFeatureFlagPayload isFeatureEnabled reloadFeatureFlags updateEarlyAccessFeatureEnrollment getEarlyAccessFeatures on onFeatureFlags onSurveysLoaded onSessionId getSurveys getActiveMatchingSurveys renderSurvey canRenderSurvey canRenderSurveyAsync identify setPersonProperties group resetGroups setPersonPropertiesForFlags resetPersonPropertiesForFlags setGroupPropertiesForFlags resetGroupPropertiesForFlags reset get_distinct_id getGroups get_session_id get_session_replay_url alias set_config startSessionRecording stopSessionRecording sessionRecordingStarted captureException loadToolbar get_property getSessionProperty Es $s createPersonProfile Is opt_in_capturing opt_out_capturing has_opted_in_capturing has_opted_out_capturing clear_opt_in_out_capturing Ss debug xs getPageViewId captureTraceFeedback captureTraceMetric".split(
+                                        " ",
+                                    ),
+                                n = 0;
+                            n < o.length;
+                            n++
+                        )
+                            g(u, o[n]);
+                        e._i.push([i, s, a]);
+                    }),
+                    (e.__SV = 1));
+            })(document, window.posthog || []);
+            posthog.init("phc_yJW1VjHGGwmCbbrtczfqqNxgBDbhlhOWcdzcIJEOTFE", {
+                api_host: "https://us.i.posthog.com",
+                person_profiles: "identified_only", // or 'always' to create profiles for anonymous users as well
+            });
+        </script>
+    </body>
+</html>
+ 
+
